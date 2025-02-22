@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Share2, Check } from 'lucide-react';
+import { Check, Link } from 'lucide-react';
 
 const Navbar = () => {
   const [showCopiedMessage, setShowCopiedMessage] = useState(false);
