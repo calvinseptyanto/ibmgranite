@@ -1,106 +1,100 @@
-import React, { useState } from 'react';
-import { Upload, FileText, X } from 'lucide-react';
+import React from 'react';
+import { Upload, X, FileText, Folder } from 'lucide-react';
 
 const DocumentUpload = ({ onFileUpload, uploadedFiles }) => {
-  const [isDragging, setIsDragging] = useState(false);
-
   const handleFileUpload = (event) => {
     const files = Array.from(event.target.files);
     onFileUpload?.(files);
   };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const files = Array.from(e.dataTransfer.files);
+  const handleFolderUpload = (event) => {
+    const files = Array.from(event.target.files);
     onFileUpload?.(files);
   };
 
-  return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden">
-      {/* Upload Area */}
-      <div 
-        className={`
-          p-8 transition-all duration-200
-          ${isDragging 
-            ? 'bg-blue-50 border-blue-300' 
-            : 'bg-slate-50 border-slate-200'
-          }
-          border-2 border-dashed rounded-xl
-        `}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        <input
-          type="file"
-          multiple
-          onChange={handleFileUpload}
-          className="hidden"
-          id="file-upload"
-          accept=".pdf,.doc,.docx,.txt"
-        />
-        <label
-          htmlFor="file-upload"
-          className="flex flex-col items-center gap-4 cursor-pointer"
-        >
-          <div className="p-4 bg-white rounded-full shadow-sm">
-            <Upload className="w-8 h-8 text-blue-500" />
-          </div>
-          <div className="text-center">
-            <p className="text-lg font-semibold text-slate-700">
-              Drop your documents here
-            </p>
-            <p className="text-sm text-slate-500 mt-1">
-              or click to browse from your computer
-            </p>
-          </div>
-          <p className="text-xs text-slate-400 mt-2">
-            Supported formats: PDF, DOC, DOCX, TXT
-          </p>
-        </label>
-      </div>
+  const getFileIcon = (filename) => {
+    const extension = filename.split('.').pop().toLowerCase();
+    switch (extension) {
+      case 'pdf':
+        return <FileText className="w-8 h-8 text-red-500" />;
+      case 'doc':
+      case 'docx':
+        return <FileText className="w-8 h-8 text-blue-500" />;
+      case 'txt':
+        return <FileText className="w-8 h-8 text-gray-500" />;
+      default:
+        return <FileText className="w-8 h-8 text-gray-400" />;
+    }
+  };
 
-      {/* File List */}
-      {uploadedFiles.length > 0 && (
-        <div className="p-6 border-t border-slate-200">
-          <h3 className="text-sm font-semibold text-slate-700 mb-4">
-            Uploaded Files ({uploadedFiles.length})
-          </h3>
-          <div className="space-y-3">
-            {uploadedFiles.map((file, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-white rounded-lg">
-                    <FileText className="w-4 h-4 text-blue-500" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-700">{file.name}</p>
-                    <p className="text-xs text-slate-500">
-                      {(file.size / 1024 / 1024).toFixed(2)} MB
-                    </p>
-                  </div>
-                </div>
-                <button className="p-1 hover:bg-slate-200 rounded-full transition-colors">
-                  <X className="w-4 h-4 text-slate-500" />
-                </button>
-              </div>
-            ))}
+  return (
+    <div className="bg-white rounded-lg shadow p-4">
+      <div className="flex flex-wrap gap-4">
+        {/* Uploaded Files */}
+        {uploadedFiles.map((file, index) => (
+          <div
+            key={index}
+            className="relative group w-24 h-24 bg-gray-50 rounded-lg border flex flex-col items-center justify-center p-2"
+          >
+            {/* Remove Button */}
+            <button 
+              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={() => onFileUpload(uploadedFiles.filter((_, i) => i !== index))}
+            >
+              <X className="w-3 h-3" />
+            </button>
+            
+            {/* File Icon */}
+            {getFileIcon(file.name)}
+            
+            {/* File Name */}
+            <span className="text-xs text-gray-600 mt-1 truncate w-full text-center">
+              {file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name}
+            </span>
+          </div>
+        ))}
+
+        {/* Upload Buttons */}
+        <div className="flex gap-2">
+          {/* File Upload */}
+          <div>
+            <input
+              type="file"
+              multiple
+              onChange={handleFileUpload}
+              className="hidden"
+              id="file-upload"
+              accept=".pdf,.doc,.docx,.txt"
+            />
+            <label
+              htmlFor="file-upload"
+              className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
+            >
+              <Upload className="w-6 h-6 text-gray-400" />
+              <span className="text-xs text-gray-500 mt-1">Upload Files</span>
+            </label>
+          </div>
+
+          {/* Folder Upload */}
+          <div>
+            <input
+              type="file"
+              webkitdirectory=""
+              directory=""
+              onChange={handleFolderUpload}
+              className="hidden"
+              id="folder-upload"
+            />
+            <label
+              htmlFor="folder-upload"
+              className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
+            >
+              <Folder className="w-6 h-6 text-gray-400" />
+              <span className="text-xs text-gray-500 mt-1">Upload Folder</span>
+            </label>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
