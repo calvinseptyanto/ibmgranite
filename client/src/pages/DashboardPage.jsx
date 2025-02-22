@@ -14,6 +14,15 @@ const DashboardPage = () => {
       { name: 'Privacy Policy', met: false },
     ]
   });
+  const [chatMode, setChatMode] = useState('popup'); // 'popup', 'sidebar', or 'fullscreen'
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  const getMainContentClass = () => {
+    if (isChatOpen && chatMode === 'sidebar') {
+      return 'w-[70vw]';
+    }
+    return 'w-full';
+  };
 
   const [keyEvents, setKeyEvents] = useState([
     {
@@ -39,33 +48,42 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-      {/* Main Content - will shift with sidebar */}
-      <main className="container mx-auto px-6 py-8 transition-all duration-300">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">
-          Document Analysis Dashboard
-        </h1>
-        
-        {/* Upload Section */}
-        <section className="mb-8">
-          <DocumentUpload
-            onFileUpload={handleFileUpload}
-            uploadedFiles={uploadedFiles}
-          />
-        </section>
+    <div className="flex min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+      {/* Main Content */}
+      <main className={`${getMainContentClass()} transition-all duration-300 ease-in-out`}>
+        <div className="p-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-8">
+            Document Analysis Dashboard
+          </h1>
+          {/* Your other dashboard content */}
+          {/* Dashboard content */}
 
-        {/* Analytics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <ComplianceScore
-            score={complianceData.score}
-            requirements={complianceData.requirements}
-          />
-          <KeyEvents events={keyEvents} />
+          {/* Upload Section */}
+          <section className="mb-8">
+            <DocumentUpload
+              onFileUpload={handleFileUpload}
+              uploadedFiles={uploadedFiles}
+            />
+          </section>
+
+          {/* Analytics Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <ComplianceScore
+              score={complianceData.score}
+              requirements={complianceData.requirements}
+            />
+            <KeyEvents events={keyEvents} />
+          </div>
         </div>
       </main>
 
       {/* Chat Interface */}
-      <ChatInterface onSendMessage={handleChatMessage} />
+      <ChatInterface 
+        isOpen={isChatOpen}
+        onOpenChange={setIsChatOpen}
+        displayMode={chatMode}
+        onDisplayModeChange={setChatMode}
+      />
     </div>
   );
 };
