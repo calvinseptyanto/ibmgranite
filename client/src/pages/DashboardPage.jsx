@@ -18,7 +18,7 @@ const DashboardPage = () => {
       { name: 'Privacy Policy', met: false },
     ]
   });
-  const [chatMode, setChatMode] = useState('popup'); // 'popup', 'sidebar', or 'fullscreen'
+  const [chatMode, setChatMode] = useState('popup');
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [keyEvents, setKeyEvents] = useState([
     {
@@ -42,14 +42,6 @@ const DashboardPage = () => {
     "Recommended actions include reviewing and updating the privacy policy before the March 15 deadline."
   );
 
-  // Helper functions
-  const getMainContentClass = () => {
-    if (isChatOpen && chatMode === 'sidebar') {
-      return 'w-[70vw]';
-    }
-    return 'w-full';
-  };
-
   const handleFileUpload = (files) => {
     setUploadedFiles(prev => [...prev, ...files]);
   };
@@ -59,37 +51,40 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Navbar */}
       <Navbar />
-
-      {/* Main Content */}
-      <main className={`container mx-auto px-6 py-8 transition-all duration-300 ${getMainContentClass()}`}>
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">
-          Document Analysis Dashboard
-        </h1>
-        
-        <div className="max-w-7xl mx-auto flex flex-col gap-8">
-          {/* Two Column Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Left Column: Document Upload and Summary */}
+      
+      {/* Content Wrapper */}
+      <div className="flex flex-1 relative">
+        {/* Main Content */}
+        <main className={`flex-1 px-6 py-8 transition-all duration-300 ${isChatOpen && chatMode === 'sidebar' ? 'mr-[30vw]' : ''}`}>
+          <div className="max-w-7xl mx-auto">
+            <h1 className="text-3xl font-bold text-gray-800 mb-8">
+              Document Analysis Dashboard
+            </h1>
+            
             <div className="flex flex-col gap-8">
-              <DocumentUpload
-                onFileUpload={handleFileUpload}
-                uploadedFiles={uploadedFiles}
-              />
-              <Summary summary={summary} />
-            </div>
+              {/* Two Column Layout */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Left Column: Document Upload and Summary */}
+                <div className="flex flex-col gap-8">
+                  <DocumentUpload
+                    onFileUpload={handleFileUpload}
+                    uploadedFiles={uploadedFiles}
+                  />
+                  <Summary summary={summary} />
+                </div>
 
-            {/* Right Column: Compliance Score and Obligations */}
-            <div className="flex flex-col gap-8">
-              <ComplianceScore
-                score={complianceData.score}
-                requirements={complianceData.requirements}
-              />
-              <ComplianceObligations />
-            </div>
-          </div>
+                {/* Right Column: Compliance Score and Obligations */}
+                <div className="flex flex-col gap-8">
+                  <ComplianceScore
+                    score={complianceData.score}
+                    requirements={complianceData.requirements}
+                  />
+                  <ComplianceObligations />
+                </div>
+              </div>
 
           {/* Bottom Row: KeyEvents full width */}
           <div className="mt-8 overflow-x-auto">
@@ -100,13 +95,14 @@ const DashboardPage = () => {
         </div>
       </main>
 
-      {/* Chat Interface */}
-      <ChatInterface 
-        isOpen={isChatOpen}
-        onOpenChange={setIsChatOpen}
-        displayMode={chatMode}
-        onDisplayModeChange={setChatMode}
-      />
+        {/* Chat Interface */}
+        <ChatInterface
+          isOpen={isChatOpen}
+          onOpenChange={setIsChatOpen}
+          displayMode={chatMode}
+          onDisplayModeChange={setChatMode}
+        />
+      </div>
     </div>
   );
 };
