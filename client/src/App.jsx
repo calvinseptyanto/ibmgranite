@@ -1,4 +1,4 @@
-import './css/reset.css'
+import './css/globals.css'
 import TestPage from './pages/TestPage'
 import ErrorPage from './pages/ErrorPage'
 import DashboardPage from './pages/DashboardPage'
