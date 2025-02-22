@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ChatInterface from '@/components/ChatInterface';
+import ChatInterface from '@/components/Chat/ChatInterface';
 import DocumentUpload from '@/components/DocumentUpload';
 import ComplianceScore from '@/components/ComplianceScore';
 import KeyEvents from '@/components/KeyEvents';
@@ -16,6 +16,7 @@ const DashboardPage = () => {
       { name: 'Privacy Policy', met: false },
     ]
   });
+
   const [keyEvents, setKeyEvents] = useState([
     {
       date: '2025-03-15',
@@ -53,7 +54,10 @@ const DashboardPage = () => {
       <Navbar />
 
       {/* Main Content */}
-      <main className="pt-16">
+      <main className="container mx-auto px-6 py-8 transition-all duration-300">
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">
+          Document Analysis Dashboard
+        </h1>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Top Grid: DocumentUpload, ComplianceScore, and Summary */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
