@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Share2, Check, Link } from 'lucide-react';
+import { Share2, Check } from 'lucide-react';
 
 const Navbar = () => {
   const [showCopiedMessage, setShowCopiedMessage] = useState(false);
@@ -24,8 +24,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
           <div className="flex items-center">
-            <Share2 className="w-4 h-4" />
-            <span className="ml-2 text-xl font-semibold">Legal AI</span>
+            <img src="assets/logo.png" alt="ConTrack" className="h-30" />
           </div>
 
           {/* Share Button */}
