@@ -440,7 +440,7 @@ Follow these rules:
 IMPORTANT: Output only valid JSON with no extra text or commentary.
 
 Text:
-{full_text}
+{retrieve_context("obligations, duties, responsibilities", k=10)}
 
 Output format:
 [
