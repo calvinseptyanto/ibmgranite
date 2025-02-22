@@ -3,6 +3,7 @@ import ChatButton from './ChatButton';
 import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages';
 import ChatInput from './ChatInput';
+import { ConTrackAPI } from '@/services/api/ContrackAPI';
 
 const ChatInterface = ({
   isOpen,
@@ -14,6 +15,7 @@ const ChatInterface = ({
     { text: 'Hello! How can I help you analyze your documents?', sender: 'assistant' }
   ]);
   const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const getContainerClasses = () => {
     const baseClasses = "bg-white flex flex-col transition-all duration-300 ease-in-out";
@@ -22,7 +24,6 @@ const ChatInterface = ({
       return `${baseClasses} fixed top-16 right-0 h-[calc(100vh-64px)] w-[30vw] border-l shadow-lg z-40`;
     }
     
-    // Enhanced fullscreen styling
     return `
       ${baseClasses}
       fixed inset-8
@@ -36,10 +37,34 @@ const ChatInterface = ({
     `;
   };
 
-  const handleSend = () => {
-    if (inputMessage.trim()) {
-      setMessages(prev => [...prev, { text: inputMessage, sender: 'user' }]);
-      setInputMessage('');
+  const handleSend = async () => {
+    if (!inputMessage.trim() || isLoading) return;
+
+    // Add user message immediately
+    const userMessage = { text: inputMessage, sender: 'user' };
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
+    setIsLoading(true);
+
+    try {
+      // Send message to API
+      const response = await ConTrackAPI.sendChatMessage(inputMessage);
+      
+      // Add AI response
+      const aiMessage = { 
+        text: response.response.output || response.response, 
+        sender: 'assistant'
+      };
+      setMessages(prev => [...prev, aiMessage]);
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      // Add error message
+      setMessages(prev => [...prev, {
+        text: 'Sorry, I encountered an error. Please try again.',
+        sender: 'assistant'
+      }]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -76,12 +101,17 @@ const ChatInterface = ({
           onClose={handleClose}
         />
         <div className="flex-1 overflow-hidden relative">
-          <ChatMessages messages={messages} />
+          <ChatMessages 
+            messages={messages} 
+            isLoading={isLoading}
+          />
         </div>
         <ChatInput
           value={inputMessage}
           onChange={setInputMessage}
           onSend={handleSend}
+          isLoading={isLoading}
+          disabled={isLoading}
         />
       </div>
     </>
