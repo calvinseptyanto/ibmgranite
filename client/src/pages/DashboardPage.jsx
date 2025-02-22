@@ -59,37 +59,38 @@ const DashboardPage = () => {
       <div className="flex flex-1 relative">
         {/* Main Content */}
         <main className={`flex-1 px-6 py-8 transition-all duration-300 ${isChatOpen && chatMode === 'sidebar' ? 'mr-[30vw]' : ''}`}>
-          <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl font-bold text-gray-800 mb-8">
-              Document Analysis Dashboard
-            </h1>
-            
-            <div className="flex flex-col gap-8">
-              {/* Two Column Layout */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Left Column: Document Upload and Summary */}
-                <div className="flex flex-col gap-8">
-                  <DocumentUpload
-                    onFileUpload={handleFileUpload}
-                    uploadedFiles={uploadedFiles}
-                  />
-                  <Summary summary={summary} />
-                </div>
-
-                {/* Right Column: Compliance Score and Obligations */}
-                <div className="flex flex-col gap-8">
-                  <ComplianceScore
-                    score={complianceData.score}
-                    requirements={complianceData.requirements}
-                  />
-                  <ComplianceObligations />
-                </div>
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold text-gray-800 mb-8">
+            Document Analysis Dashboard
+          </h1>
+          
+          <div className="flex flex-col gap-8">
+            {/* Two Column Layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Left Column: Document Upload and Summary */}
+              <div className="flex flex-col gap-8">
+                <DocumentUpload
+                  onFileUpload={handleFileUpload}
+                  uploadedFiles={uploadedFiles}
+                />
+                <Summary summary={summary} />
               </div>
 
-          {/* Bottom Row: KeyEvents full width */}
-          <div className="mt-8 overflow-x-auto">
-            <div className="min-w-[640px] w-full">
-              <KeyEvents events={keyEvents} />
+              {/* Right Column: Compliance Score and Obligations */}
+              <div className="flex flex-col gap-8">
+                <ComplianceScore
+                  score={complianceData.score}
+                  requirements={complianceData.requirements}
+                />
+                <ComplianceObligations />
+              </div>
+            </div>
+
+            {/* Bottom Row: KeyEvents full width */}
+            <div className="mt-8 overflow-x-auto">
+              <div className="min-w-[640px] w-full">
+                <KeyEvents events={keyEvents} />
+              </div>
             </div>
           </div>
         </div>
@@ -106,5 +107,6 @@ const DashboardPage = () => {
     </div>
   );
 };
+
 
 export default DashboardPage;
