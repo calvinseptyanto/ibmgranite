@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ChatInterface from '@/components/ChatInterface';
+import ChatInterface from '@/components/Chat/ChatInterface';
 import DocumentUpload from '@/components/DocumentUpload';
 import ComplianceScore from '@/components/ComplianceScore';
 import KeyEvents from '@/components/KeyEvents';
@@ -14,6 +14,7 @@ const DashboardPage = () => {
       { name: 'Privacy Policy', met: false },
     ]
   });
+
   const [keyEvents, setKeyEvents] = useState([
     {
       date: '2025-03-15',
@@ -39,9 +40,11 @@ const DashboardPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-      {/* Main Content */}
-      <main className="container mx-auto px-6 py-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Document Analysis Dashboard</h1>
+      {/* Main Content - will shift with sidebar */}
+      <main className="container mx-auto px-6 py-8 transition-all duration-300">
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">
+          Document Analysis Dashboard
+        </h1>
         
         {/* Upload Section */}
         <section className="mb-8">
