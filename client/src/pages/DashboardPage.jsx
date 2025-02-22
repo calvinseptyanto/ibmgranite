@@ -3,6 +3,8 @@ import ChatInterface from '@/components/ChatInterface';
 import DocumentUpload from '@/components/DocumentUpload';
 import ComplianceScore from '@/components/ComplianceScore';
 import KeyEvents from '@/components/KeyEvents';
+import Summary from '@/components/Summary';
+import Navbar from '@/components/Navbar';
 
 const DashboardPage = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -28,6 +30,14 @@ const DashboardPage = () => {
       description: 'Internal compliance review deadline'
     }
   ]);
+  
+  const [summary, setSummary] = useState(
+    "This document outlines the compliance requirements and obligations for data handling and privacy policies. Key points include:\n\n" +
+    "1. Data protection measures are currently in place and meeting standards\n" +
+    "2. Document retention policies are being followed correctly\n" +
+    "3. Privacy policy requires updates to align with new regulations\n\n" +
+    "Recommended actions include reviewing and updating the privacy policy before the March 15 deadline."
+  );
 
   const handleFileUpload = (files) => {
     setUploadedFiles(prev => [...prev, ...files]);
@@ -38,26 +48,30 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-      {/* Main Content */}
-      <main className="container mx-auto px-6 py-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Document Analysis Dashboard</h1>
-        
-        {/* Upload Section */}
-        <section className="mb-8">
-          <DocumentUpload
-            onFileUpload={handleFileUpload}
-            uploadedFiles={uploadedFiles}
-          />
-        </section>
+    <div className="min-h-screen bg-gray-50">
+      {/* Navbar */}
+      <Navbar />
 
-        {/* Analytics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <ComplianceScore
-            score={complianceData.score}
-            requirements={complianceData.requirements}
-          />
-          <KeyEvents events={keyEvents} />
+      {/* Main Content */}
+      <main className="pt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Top Grid: DocumentUpload, ComplianceScore, and Summary */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <DocumentUpload
+              onFileUpload={handleFileUpload}
+              uploadedFiles={uploadedFiles}
+            />
+            <ComplianceScore
+              score={complianceData.score}
+              requirements={complianceData.requirements}
+            />
+            <Summary summary={summary} />
+          </div>
+
+          {/* Bottom Row: KeyEvents full width */}
+          <div>
+            <KeyEvents events={keyEvents} />
+          </div>
         </div>
       </main>
 
