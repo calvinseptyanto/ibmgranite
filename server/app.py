@@ -47,7 +47,7 @@ IBM_URL = os.getenv("IBM_WATSONX_URL")
 
 # Create Watsonx Embeddings
 embeddings = WatsonxEmbeddings(
-    model_id=EmbeddingTypes.IBM_SLATE_30M_ENG.value,
+    model_id="ibm/granite-embedding-107m-multilingual",
     url=IBM_URL,
     apikey=IBM_API_KEY,
     project_id=IBM_PROJECT_ID,
