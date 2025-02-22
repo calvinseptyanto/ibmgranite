@@ -8,6 +8,7 @@ import ComplianceObligations from '@/components/ComplianceObligations';
 import Navbar from '@/components/Navbar';
 
 const DashboardPage = () => {
+  // State definitions
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [complianceData, setComplianceData] = useState({
     score: 75,
@@ -17,7 +18,8 @@ const DashboardPage = () => {
       { name: 'Privacy Policy', met: false },
     ]
   });
-
+  const [chatMode, setChatMode] = useState('popup'); // 'popup', 'sidebar', or 'fullscreen'
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [keyEvents, setKeyEvents] = useState([
     {
       date: '2025-03-15',
@@ -32,7 +34,6 @@ const DashboardPage = () => {
       description: 'Internal compliance review deadline'
     }
   ]);
-  
   const [summary, setSummary] = useState(
     "This document outlines the compliance requirements and obligations for data handling and privacy policies. Key points include:\n\n" +
     "1. Data protection measures are currently in place and meeting standards\n" +
@@ -40,6 +41,14 @@ const DashboardPage = () => {
     "3. Privacy policy requires updates to align with new regulations\n\n" +
     "Recommended actions include reviewing and updating the privacy policy before the March 15 deadline."
   );
+
+  // Helper functions
+  const getMainContentClass = () => {
+    if (isChatOpen && chatMode === 'sidebar') {
+      return 'w-[70vw]';
+    }
+    return 'w-full';
+  };
 
   const handleFileUpload = (files) => {
     setUploadedFiles(prev => [...prev, ...files]);
@@ -55,15 +64,15 @@ const DashboardPage = () => {
       <Navbar />
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-8 transition-all duration-300">
+      <main className={`container mx-auto px-6 py-8 transition-all duration-300 ${getMainContentClass()}`}>
         <h1 className="text-3xl font-bold text-gray-800 mb-8">
           Document Analysis Dashboard
         </h1>
         
         <div className="max-w-7xl mx-auto flex flex-col gap-8">
-          {/* Two Stacks Side by Side */}
+          {/* Two Column Layout */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Left Stack: Document Upload and Summary */}
+            {/* Left Column: Document Upload and Summary */}
             <div className="flex flex-col gap-8">
               <DocumentUpload
                 onFileUpload={handleFileUpload}
@@ -72,7 +81,7 @@ const DashboardPage = () => {
               <Summary summary={summary} />
             </div>
 
-            {/* Right Stack: Compliance Score and Compliance Obligations */}
+            {/* Right Column: Compliance Score and Obligations */}
             <div className="flex flex-col gap-8">
               <ComplianceScore
                 score={complianceData.score}
@@ -92,7 +101,12 @@ const DashboardPage = () => {
       </main>
 
       {/* Chat Interface */}
-      <ChatInterface onSendMessage={handleChatMessage} />
+      <ChatInterface 
+        isOpen={isChatOpen}
+        onOpenChange={setIsChatOpen}
+        displayMode={chatMode}
+        onDisplayModeChange={setChatMode}
+      />
     </div>
   );
 };
