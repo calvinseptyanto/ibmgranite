@@ -1,62 +1,101 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Calendar, Clock, AlertTriangle, Flag } from 'lucide-react';
 
 const KeyEvents = ({ events }) => {
-  const getEventTypeStyle = (type) => {
+  const getEventIcon = (type) => {
     switch (type.toLowerCase()) {
       case 'deadline':
-        return 'bg-red-100 text-red-800';
+        return <AlertTriangle className="w-5 h-5 text-red-500" />;
       case 'milestone':
-        return 'bg-blue-100 text-blue-800';
-      case 'requirement':
-        return 'bg-yellow-100 text-yellow-800';
+        return <Flag className="w-5 h-5 text-blue-500" />;
       default:
-        return 'bg-gray-100 text-gray-800';
+        return <Calendar className="w-5 h-5 text-gray-500" />;
+    }
+  };
+
+  const getEventStyles = (type) => {
+    switch (type.toLowerCase()) {
+      case 'deadline':
+        return {
+          border: 'border-red-200',
+          bg: 'bg-red-50',
+          text: 'text-red-700',
+          badge: 'bg-red-100 text-red-800'
+        };
+      case 'milestone':
+        return {
+          border: 'border-blue-200',
+          bg: 'bg-blue-50',
+          text: 'text-blue-700',
+          badge: 'bg-blue-100 text-blue-800'
+        };
+      default:
+        return {
+          border: 'border-gray-200',
+          bg: 'bg-gray-50',
+          text: 'text-gray-700',
+          badge: 'bg-gray-100 text-gray-800'
+        };
     }
   };
 
   return (
-    <Card className="p-4">
-      <h3 className="text-lg font-semibold mb-4">Key Events</h3>
-      <ScrollArea className="h-[300px]">
-        <div className="space-y-4">
-          {events?.map((event, index) => (
-            <div
+    <div className="bg-white rounded-xl shadow-md p-6">
+      <h2 className="text-xl font-bold text-gray-800 mb-6">Key Events</h2>
+      
+      <div className="space-y-6">
+        {events.map((event, index) => {
+          const styles = getEventStyles(event.type);
+          
+          return (
+            <div 
               key={index}
-              className="border-l-4 border-primary pl-4 pb-4"
+              className={`
+                relative pl-6 pb-6
+                ${index !== events.length - 1 ? 'border-l-2 border-gray-200' : ''}
+              `}
             >
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-sm text-gray-500">
-                  {new Date(event.date).toLocaleDateString()}
-                </span>
-                <span
-                  className={`text-xs px-2 py-0.5 rounded-full ${getEventTypeStyle(
-                    event.type
-                  )}`}
-                >
-                  {event.type}
-                </span>
+              {/* Event Dot */}
+              <div className="absolute -left-2 p-1 bg-white rounded-full">
+                <div className={`w-4 h-4 rounded-full ${styles.bg} border-2 ${styles.border}`} />
               </div>
-              <h4 className="font-medium mb-1">{event.title}</h4>
-              <p className="text-sm text-gray-600">{event.description}</p>
+
+              {/* Event Content */}
+              <div className={`
+                p-4 rounded-lg ${styles.bg} border ${styles.border}
+                ml-4 transition-all duration-200 hover:shadow-md
+              `}>
+                {/* Header */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    {getEventIcon(event.type)}
+                    <span className={`
+                      text-sm font-semibold px-2 py-1 rounded-full
+                      ${styles.badge}
+                    `}>
+                      {event.type}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-500">
+                    <Clock className="w-4 h-4" />
+                    <span className="text-sm">{event.date}</span>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <h3 className={`text-lg font-semibold mb-2 ${styles.text}`}>
+                  {event.title}
+                </h3>
+                <p className="text-gray-600">
+                  {event.description}
+                </p>
+              </div>
             </div>
-          ))}
-        </div>
-      </ScrollArea>
-    </Card>
+          );
+        })}
+      </div>
+    </div>
   );
-};
-KeyEvents.propTypes = {
-  events: PropTypes.arrayOf(
-    PropTypes.shape({
-      date: PropTypes.string.isRequired,
-      type: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired
-    })
-  )
 };
 
 export default KeyEvents;

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import ChatInterface from '../components/ui/ChatInterface';
-import DocumentUpload from '../components/DocumentUpload';
-import ComplianceScore from '../components/ComplianceScore';
-import KeyEvents from '../components/KeyEvents';
+import ChatInterface from '@/components/ChatInterface';
+import DocumentUpload from '@/components/DocumentUpload';
+import ComplianceScore from '@/components/ComplianceScore';
+import KeyEvents from '@/components/KeyEvents';
 
 const DashboardPage = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -31,33 +31,37 @@ const DashboardPage = () => {
 
   const handleFileUpload = (files) => {
     setUploadedFiles(prev => [...prev, ...files]);
-    // Add your file processing logic here
   };
 
   const handleChatMessage = (message) => {
-    // Add your chat message processing logic here
     console.log('Processing message:', message);
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      <div className="flex-1 p-6">
-        <div className="mb-6">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+      {/* Main Content */}
+      <main className="container mx-auto px-6 py-8">
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">Document Analysis Dashboard</h1>
+        
+        {/* Upload Section */}
+        <section className="mb-8">
           <DocumentUpload
             onFileUpload={handleFileUpload}
             uploadedFiles={uploadedFiles}
           />
-        </div>
+        </section>
 
-        <div className="grid grid-cols-2 gap-4">
+        {/* Analytics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <ComplianceScore
             score={complianceData.score}
             requirements={complianceData.requirements}
           />
           <KeyEvents events={keyEvents} />
         </div>
-      </div>
+      </main>
 
+      {/* Chat Interface */}
       <ChatInterface onSendMessage={handleChatMessage} />
     </div>
   );
