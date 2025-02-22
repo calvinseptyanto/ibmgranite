@@ -83,8 +83,10 @@ const DashboardPage = () => {
           </div>
 
           {/* Bottom Row: KeyEvents full width */}
-          <div className="mt-8">
-            <KeyEvents events={keyEvents} />
+          <div className="mt-8 overflow-x-auto">
+            <div className="min-w-[640px] w-full">
+              <KeyEvents events={keyEvents} />
+            </div>
           </div>
         </div>
       </main>
