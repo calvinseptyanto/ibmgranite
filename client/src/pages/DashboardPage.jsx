@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import ChatInterface from '@/components/ChatInterface';
-import DocumentUpload from '@/components/DocumentUpload';
-import ComplianceScore from '@/components/ComplianceScore';
-import KeyEvents from '@/components/KeyEvents';
+import ChatInterface from '../components/ui/ChatInterface';
+import DocumentUpload from '../components/DocumentUpload';
+import ComplianceScore from '../components/ComplianceScore';
+import KeyEvents from '../components/KeyEvents';
 
 const DashboardPage = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]);

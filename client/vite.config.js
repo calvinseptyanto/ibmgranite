@@ -9,9 +9,13 @@ const __dirname = path.dirname(__filename)
 
 export default defineConfig({
   plugins: [react()],
+  css: {
+    postcss: './postcss.config.js',
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
 })
+

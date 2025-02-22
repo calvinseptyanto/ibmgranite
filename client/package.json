@@ -1,6 +1,31 @@
 {
+  "name": "my-vite-app",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
   "dependencies": {
+    "@radix-ui/react-scroll-area": "^1.2.3",
+    "@shadcn/ui": "^0.0.4",
+    "@tailwindcss/postcss": "^4.0.8",
+    "@vitejs/plugin-react": "^4.3.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.475.0",
     "prop-types": "^15.8.1",
-    "react-router-dom": "^7.2.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^7.2.0",
+    "tailwind-merge": "^3.0.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.8",
+    "vite": "^5.0.0"
   }
 }
