@@ -4,6 +4,7 @@ import DocumentUpload from '@/components/DocumentUpload';
 import ComplianceScore from '@/components/ComplianceScore';
 import KeyEvents from '@/components/KeyEvents';
 import Summary from '@/components/Summary';
+import ComplianceObligations from '@/components/ComplianceObligations';
 import Navbar from '@/components/Navbar';
 
 const DashboardPage = () => {
@@ -58,22 +59,31 @@ const DashboardPage = () => {
         <h1 className="text-3xl font-bold text-gray-800 mb-8">
           Document Analysis Dashboard
         </h1>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Top Grid: DocumentUpload, ComplianceScore, and Summary */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <DocumentUpload
-              onFileUpload={handleFileUpload}
-              uploadedFiles={uploadedFiles}
-            />
-            <ComplianceScore
-              score={complianceData.score}
-              requirements={complianceData.requirements}
-            />
-            <Summary summary={summary} />
+        
+        <div className="max-w-7xl mx-auto flex flex-col gap-8">
+          {/* Two Stacks Side by Side */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Left Stack: Document Upload and Summary */}
+            <div className="flex flex-col gap-8">
+              <DocumentUpload
+                onFileUpload={handleFileUpload}
+                uploadedFiles={uploadedFiles}
+              />
+              <Summary summary={summary} />
+            </div>
+
+            {/* Right Stack: Compliance Score and Compliance Obligations */}
+            <div className="flex flex-col gap-8">
+              <ComplianceScore
+                score={complianceData.score}
+                requirements={complianceData.requirements}
+              />
+              <ComplianceObligations />
+            </div>
           </div>
 
           {/* Bottom Row: KeyEvents full width */}
-          <div>
+          <div className="mt-8">
             <KeyEvents events={keyEvents} />
           </div>
         </div>
