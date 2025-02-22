@@ -24,7 +24,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
           <div className="flex items-center">
-            <Link className="w-6 h-6 text-blue-600" />
+            <Share2 className="w-4 h-4" />
             <span className="ml-2 text-xl font-semibold">Legal AI</span>
           </div>
 
@@ -41,7 +41,7 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
-                  <Share2 className="w-4 h-4" />
+                  <Link className="w-6 h-6 text-white-600" />
                   <span>Share</span>
                 </>
               )}

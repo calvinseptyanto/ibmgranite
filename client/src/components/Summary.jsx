@@ -7,13 +7,13 @@ const Summary = ({ summary = "Loading summary..." }) => {
   const handleRefresh = async () => {
     setIsLoading(true);
     // Add your API call here
-    setTimeout(() => setIsLoading(false), 1000); // Temporary timeout for demo
+    setTimeout(() => setIsLoading(false), 1000);
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-4 h-full">
+    <div className="bg-white rounded-lg shadow h-[300px] flex flex-col">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center p-4 border-b shrink-0">
         <h2 className="text-xl font-semibold text-gray-800">Summary</h2>
         <button 
           onClick={handleRefresh}
@@ -23,11 +23,13 @@ const Summary = ({ summary = "Loading summary..." }) => {
         </button>
       </div>
 
-      {/* Summary Content */}
-      <div className="h-[calc(100%-2rem)] overflow-auto">
-        <p className="text-gray-600 whitespace-pre-wrap">
-          {summary}
-        </p>
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400">
+        <div className="prose prose-sm max-w-none">
+          <p className="text-gray-600 whitespace-pre-wrap">
+            {summary}
+          </p>
+        </div>
       </div>
     </div>
   );
