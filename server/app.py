@@ -30,15 +30,6 @@ app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "./uploaded_pdfs"
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
-# ------------------ Global State ------------------
-# Check if the folder exists and is not empty
-upload_folder = app.config["UPLOAD_FOLDER"]
-if os.path.isdir(upload_folder) and os.listdir(upload_folder):
-    pdfs_loaded = True
-else:
-    pdfs_loaded = False
-full_text = ""       # Accumulates the entire text from all uploaded PDFs
-
 # ------------------ Define Watsonx Embeddings/LLM ------------------
 # Load environment variables
 IBM_API_KEY = os.getenv("IBM_WATSONX_APIKEY")
@@ -81,6 +72,22 @@ text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
 )
 
 
+def retrieve_context(query: str, k: int = 5) -> str:
+    """
+    Retrieve up to k relevant chunks from the vectorstore for the given query.
+    """
+    retriever = vectorstore.as_retriever()
+    docs = retriever.get_relevant_documents(query)
+    top_k_docs = docs[:k]
+    context = "\n\n".join(doc.page_content for doc in top_k_docs)
+    return context
+
+# ------------------ Preamble ------------------
+
+
+full_text = ""
+
+
 def _load_and_add_pdfs(pdf_paths):
     """
     1) Load each PDF via PyPDFLoader
@@ -108,15 +115,18 @@ def _load_and_add_pdfs(pdf_paths):
     # vectorstore.persist()
 
 
-def retrieve_context(query: str, k: int = 5) -> str:
-    """
-    Retrieve up to k relevant chunks from the vectorstore for the given query.
-    """
-    retriever = vectorstore.as_retriever()
-    docs = retriever.get_relevant_documents(query)
-    top_k_docs = docs[:k]
-    context = "\n\n".join(doc.page_content for doc in top_k_docs)
-    return context
+# ------------------ Global State ------------------
+# Check if the folder exists and is not empty
+upload_folder = app.config["UPLOAD_FOLDER"]
+pdf_files = [os.path.join(upload_folder, f)
+             for f in os.listdir(upload_folder) if f.endswith('.pdf')]
+if pdf_files:
+    pdfs_loaded = True
+    _load_and_add_pdfs(pdf_files)
+else:
+    pdfs_loaded = False
+    full_text = ""
+
 
 # ------------------ Tools for the Agent ------------------
 
@@ -356,7 +366,7 @@ def summarizer():
 You are an expert in summarizing legal agreements. Provide a concise summary of the agreement in exactly 2-3 plain sentences. Do not use bullet points, numbers, or lists. Focus on the main purpose, the key parties involved, and the primary obligations or terms.
 
 Agreement Excerpts:
-{retrieve_context("main purpose, the key parties involved, and the primary obligations or terms", k=10)}
+{full_text}
 """
     try:
         # Generate summary using the LLM
@@ -430,7 +440,7 @@ Follow these rules:
 IMPORTANT: Output only valid JSON with no extra text or commentary.
 
 Text:
-{retrieve_context("obligations, duties, responsibilities", k=10)}
+{full_text}
 
 Output format:
 [
