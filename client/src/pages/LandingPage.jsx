@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Upload, Link as LinkIcon } from 'lucide-react';
 import { ConTrackAPI } from '@/services/api/ConTrackAPI';
+import { useFile } from "../services/FileContext";
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { uploadedFile, setUploadedFile } = useFile();  // ✅ Get file context
   const [linkInput, setLinkInput] = useState('');
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  
+  const { uploadedFiles, setUploadedFiles } = useFile();  // Changed from uploadedFile to uploadedFiles
   
   const handleFileUpload = async (event) => {
     const files = Array.from(event.target.files);
@@ -17,21 +21,13 @@ const LandingPage = () => {
     try {
       // Upload files to API
       await ConTrackAPI.uploadFiles(files);
-      
-      // Navigate to dashboard with files info
-      navigate('/dashboard', { 
-        state: { 
-          uploadedFiles: files.map(file => ({
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            lastModified: file.lastModified
-          }))
-        }
-      });
+
+      // Store files in context
+      setUploadedFiles(files);  // Changed from setUploadedFile to setUploadedFiles
+
+      navigate('/dashboard');
     } catch (error) {
       console.error('Upload failed:', error);
-      // You might want to show an error message to the user
     } finally {
       setIsUploading(false);
     }
@@ -47,9 +43,7 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center">
       <div className="max-w-2xl w-full px-6">
-        {/* Main Content */}
-        <div className="max-w-2xl w-full px-6">
-        {/* Main Content */}
+        {/* Logo and Text */}
         <div className="flex justify-center items-center">
           <img src="assets/logo.png" alt="ConTrack" className="h-40 w-auto mx-auto" />
         </div>
@@ -58,10 +52,8 @@ const LandingPage = () => {
             Upload your documents or enter a shared link to get started
           </p>
         </div>
-      </div>
 
-
-        {/* Options Grid */}
+        {/* Upload & Link Input */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Upload Option */}
           <div className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow">
@@ -90,14 +82,11 @@ const LandingPage = () => {
             </div>
           </div>
 
-          {/* Link Option */}
+          {/* Link Input */}
           <div className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow">
             <div className="text-center">
               {!showLinkInput ? (
-                <button
-                  onClick={() => setShowLinkInput(true)}
-                  className="w-full"
-                >
+                <button onClick={() => setShowLinkInput(true)} className="w-full">
                   <div className="mb-4 mx-auto w-16 h-16 bg-green-50 rounded-full flex items-center justify-center">
                     <LinkIcon className="w-8 h-8 text-green-500" />
                   </div>
@@ -119,10 +108,7 @@ const LandingPage = () => {
                     className="w-full px-4 py-2 border rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-green-500"
                     autoFocus
                   />
-                  <button
-                    type="submit"
-                    className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors"
-                  >
+                  <button type="submit" className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors">
                     Access Dashboard
                   </button>
                 </form>
