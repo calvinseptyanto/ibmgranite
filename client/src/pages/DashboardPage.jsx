@@ -8,8 +8,10 @@ import Summary from '@/components/Summary';
 import ComplianceObligations from '@/components/ComplianceObligations';
 import Navbar from '@/components/Navbar';
 
+import { ConTrackAPI } from '@/services/api/ConTrackAPI';
+
 const DashboardPage = () => {
-  const { uploadedFiles, addFiles } = useFile(); // Get files from context
+  const { uploadedFiles, setUploadedFiles } = useFile(); // Get files from context
   const [complianceData] = useState({
     score: 75,
     requirements: [
@@ -46,8 +48,16 @@ const DashboardPage = () => {
     "Recommended actions include reviewing and updating the privacy policy before the March 15 deadline."
   );
 
-  const handleFileUpload = (files) => {
-    addFiles(files);
+  const handleFileUpload = async (files) => {
+    try {
+      // Upload files to API
+      await ConTrackAPI.uploadFiles(files);
+      
+      // Update the files in context
+      setUploadedFiles(prevFiles => [...prevFiles, ...files]);
+    } catch (error) {
+      console.error('Upload failed:', error);
+    }
   };
 
   return (
@@ -73,6 +83,7 @@ const DashboardPage = () => {
                     isPDFSignerOpen={isPDFSignerOpen}
                     selectedFile={selectedFile}
                   />
+                  
                   <Summary summary={summary} />
                 </div>
 
