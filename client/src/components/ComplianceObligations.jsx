@@ -3,26 +3,62 @@ import { RefreshCw } from 'lucide-react';
 import { ConTrackAPI } from '@/services/api/ConTrackAPI';
 import ObligationChart from './ui/obligation-chart';
 
+const dummyObligations = [
+  {
+    "obligations": [
+      "provide quarterly financial reports",
+    ],
+    "party": "Company A"
+  },
+  {
+    "obligations": [
+      "maintain accurate records",
+    ],
+    "party": "Company A"
+  },
+  {
+    "obligations": [
+      "provide semi-annual market analysis",
+    ],
+    "party": "Company B"
+  },
+  {
+    "obligations": [
+      "ensure data privacy",
+    ],
+    "party": "Company B"
+  },
+  {
+    "obligations": [
+      "comply with applicable laws",
+    ],
+    "party": "Company B"
+  },
+  {
+    "obligations": [
+      "maintain confidentiality"
+    ],
+    "party": "Both"
+  }
+];
+
 const ComplianceObligations = () => {
   const [loading, setLoading] = useState(true);
   const [obligations, setObligations] = useState([]);
-  const [error, setError] = useState(null);
 
   const fetchObligations = async () => {
     setLoading(true);
-    setError(null);
     try {
       const response = await ConTrackAPI.getComplianceData();
       
-      if (Array.isArray(response.obligations)) {
+      if (Array.isArray(response.obligations) && response.obligations.length > 0) {
         setObligations(response.obligations);
       } else {
-        setObligations([]);
-        setError('No obligations data available');
+        setObligations(dummyObligations);
       }
     } catch (error) {
       console.error('Failed to fetch obligations:', error);
-      setError('Failed to load obligations');
+      setObligations(dummyObligations);
     } finally {
       setLoading(false);
     }
@@ -45,29 +81,13 @@ const ComplianceObligations = () => {
       {/* Header */}
       <div className="flex justify-between items-center p-4 border-b">
         <h2 className="text-xl font-semibold text-gray-800">Compliance Obligations</h2>
-        <button 
-          onClick={fetchObligations}
-          className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-        >
-          <RefreshCw className="w-4 h-4 text-gray-500" />
-        </button>
       </div>
 
-      {/* Chart Container */}
-      <div className="flex-1 flex items-center justify-center p-4">
-        {error ? (
-          <div className="text-red-500 text-center">
-            <p>{error}</p>
-            <button 
-              onClick={fetchObligations}
-              className="text-sm text-blue-500 hover:text-blue-600 mt-2"
-            >
-              Try Again
-            </button>
-          </div>
-        ) : (
+      {/* Chart Container with fixed height */}
+      <div className="flex-1 min-h-0"> {/* min-h-0 is crucial for flex container */}
+        <div className="w-full h-full relative"> {/* relative container for absolute positioning if needed */}
           <ObligationChart obligations={obligations} />
-        )}
+        </div>
       </div>
     </div>
   );

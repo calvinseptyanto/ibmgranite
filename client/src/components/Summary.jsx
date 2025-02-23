@@ -27,13 +27,6 @@ const Summary = () => {
       {/* Header */}
       <div className="flex justify-between items-center p-4 border-b shrink-0">
         <h2 className="text-xl font-semibold text-gray-800">Summary</h2>
-        <button 
-          onClick={fetchSummary}
-          className={`p-2 rounded-full hover:bg-gray-100 transition-all ${loading ? 'animate-spin' : ''}`}
-          disabled={loading}
-        >
-          <RefreshCw className="w-4 h-4 text-gray-500" />
-        </button>
       </div>
 
       {/* Content */}
