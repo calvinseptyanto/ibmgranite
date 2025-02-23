@@ -6,13 +6,37 @@ const Navbar = () => {
 
   const handleShare = async () => {
     try {
-      // Get the current URL
+      // Get the current URL including query parameters
       const currentUrl = window.location.href;
-      await navigator.clipboard.writeText(currentUrl);
-     
+      
+      // Use the Clipboard API with fallback
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(currentUrl);
+      } else {
+        // Fallback for non-HTTPS or browsers without clipboard API
+        const textArea = document.createElement("textarea");
+        textArea.value = currentUrl;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          document.execCommand('copy');
+        } catch (err) {
+          console.error('Fallback: Oops, unable to copy', err);
+        }
+        textArea.remove();
+      }
+      
       // Show copied message
       setShowCopiedMessage(true);
-      setTimeout(() => setShowCopiedMessage(false), 2000);
+      
+      // Hide message after 2 seconds
+      setTimeout(() => {
+        setShowCopiedMessage(false);
+      }, 2000);
     } catch (err) {
       console.error('Failed to copy:', err);
     }
@@ -26,12 +50,13 @@ const Navbar = () => {
           <div className="flex items-center">
             <img src="assets/contrack.png" alt="ConTrack" className="h-30" />
           </div>
-
+          
           {/* Share Button */}
-          <div className="relative">
+          <div className="relative inline-block">
             <button
               onClick={handleShare}
               className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              aria-label="Share link"
             >
               {showCopiedMessage ? (
                 <>
@@ -40,15 +65,19 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
-                  <Link className="w-6 h-6 text-white-600" />
+                  <Link className="w-4 h-4" />
                   <span>Share</span>
                 </>
               )}
             </button>
-
-            {/* Tooltip/Message (appears when copying) */}
+            
+            {/* Tooltip/Message */}
             {showCopiedMessage && (
-              <div className="absolute right-0 mt-2 py-1 px-3 bg-gray-800 text-white text-sm rounded shadow-lg whitespace-nowrap">
+              <div 
+                className="absolute right-0 mt-2 py-2 px-3 bg-gray-800 text-white text-sm rounded shadow-lg whitespace-nowrap"
+                role="status"
+                aria-live="polite"
+              >
                 Link copied to clipboard
               </div>
             )}

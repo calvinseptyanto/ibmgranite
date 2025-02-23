@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFile } from '@/services/FileContext';
 import ChatInterface from '@/components/Chat/ChatInterface';
 import DocumentUpload from '@/components/DocumentUpload';
@@ -7,11 +7,15 @@ import KeyEvents from '@/components/KeyEvents';
 import Summary from '@/components/Summary';
 import ComplianceObligations from '@/components/ComplianceObligations';
 import Navbar from '@/components/Navbar';
+import { documentService } from '@/services/documentService';
+import { useSearchParams } from 'react-router-dom';
 
 import { ConTrackAPI } from '@/services/api/ConTrackAPI';
 
 const DashboardPage = () => {
-  const { uploadedFiles, setUploadedFiles } = useFile(); // Get files from context
+  const [searchParams] = useSearchParams();
+  const dashboardId = searchParams.get('id');
+  const { uploadedFiles, setUploadedFiles } = useFile();
   const [complianceData] = useState({
     score: 75,
     requirements: [
@@ -40,6 +44,12 @@ const DashboardPage = () => {
     }
   ]);
 
+  useEffect(() => {
+    if (dashboardId) {
+      loadDocuments();
+    }
+  }, [dashboardId]);
+
   const [summary] = useState(
     "This document outlines the compliance requirements and obligations for data handling and privacy policies. Key points include:\n\n" +
     "1. Data protection measures are currently in place and meeting standards\n" +
@@ -48,15 +58,61 @@ const DashboardPage = () => {
     "Recommended actions include reviewing and updating the privacy policy before the March 15 deadline."
   );
 
+  const loadDocuments = async () => {
+    try {
+      const documents = await documentService.getDocumentsByDashboardId(dashboardId);
+      setUploadedFiles(documents.map(doc => ({
+        name: doc.file_name,
+        url: doc.file_url,
+        type: doc.file_type,
+        size: doc.file_size,
+        id: doc.id
+      })));
+    } catch (error) {
+      console.error('Error loading documents:', error);
+    }
+  };
+
   const handleFileUpload = async (files) => {
     try {
-      // Upload files to API
+      // First, upload to ConTrack API
       await ConTrackAPI.uploadFiles(files);
       
-      // Update the files in context
-      setUploadedFiles(prevFiles => [...prevFiles, ...files]);
+      // Then handle Supabase storage in parallel
+      for (const file of files) {
+        const { document, dashboardId: newDashboardId } = await documentService.uploadDocument(
+          file,
+          dashboardId
+        );
+
+        // If this is a new dashboard (no existing dashboardId),
+        // redirect to the dashboard URL with the new ID
+        if (!dashboardId) {
+          window.location.href = `/dashboard?id=${newDashboardId}`;
+          return;
+        }
+
+        // Update the files in context
+        setUploadedFiles(prevFiles => [...prevFiles, {
+          name: document.file_name,
+          url: document.file_url,
+          type: document.file_type,
+          size: document.file_size,
+          id: document.id
+        }]);
+      }
     } catch (error) {
       console.error('Upload failed:', error);
+      throw error; // Re-throw to be handled by the component
+    }
+  };
+
+  const handleDeleteFile = async (fileId) => {
+    try {
+      await documentService.deleteDocument(fileId);
+      setUploadedFiles(prevFiles => prevFiles.filter(file => file.id !== fileId));
+    } catch (error) {
+      console.error('Delete failed:', error);
     }
   };
 

@@ -13,6 +13,7 @@
     "@radix-ui/react-scroll-area": "^1.2.3",
     "@radix-ui/react-slot": "^1.1.2",
     "@shadcn/ui": "^0.0.4",
+    "@supabase/supabase-js": "^2.48.1",
     "@tailwindcss/postcss": "^4.0.8",
     "@vitejs/plugin-react": "^4.3.4",
     "class-variance-authority": "^0.7.1",
@@ -29,7 +30,8 @@
     "react-signature-canvas": "^1.0.7",
     "recharts": "^2.15.1",
     "tailwind-merge": "^3.0.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",

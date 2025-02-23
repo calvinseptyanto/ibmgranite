@@ -3,15 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { Upload, Link as LinkIcon } from 'lucide-react';
 import { ConTrackAPI } from '@/services/api/ConTrackAPI';
 import { useFile } from "../services/FileContext";
+import { documentService } from '@/services/documentService';
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const { uploadedFile, setUploadedFile } = useFile();  // ✅ Get file context
+  const { uploadedFiles, setUploadedFiles } = useFile();
   const [linkInput, setLinkInput] = useState('');
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  
-  const { uploadedFiles, setUploadedFiles } = useFile();  // Changed from uploadedFile to uploadedFiles
   
   const handleFileUpload = async (event) => {
     const files = Array.from(event.target.files);
@@ -19,17 +18,38 @@ const LandingPage = () => {
 
     setIsUploading(true);
     try {
-      // Upload files to API
+      // Upload files to ConTrack API
       await ConTrackAPI.uploadFiles(files);
 
-      // Store files in context
-      setUploadedFiles(files);  // Changed from setUploadedFile to setUploadedFiles
+      // Upload to Supabase and get dashboard ID
+      const { document, dashboardId } = await documentService.uploadDocument(files[0]);
+      
+      // Store files in context with Supabase IDs
+      setUploadedFiles(files.map(file => ({
+        ...file,
+        id: document.id,
+        url: document.file_url
+      })));
 
-      navigate('/dashboard');
+      // Navigate to dashboard with new ID
+      navigate(`/dashboard?id=${dashboardId}`);
     } catch (error) {
       console.error('Upload failed:', error);
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleFileDelete = async (fileId) => {
+    try {
+      if (typeof fileId === 'string') {
+        // If it's a Supabase file ID
+        await documentService.deleteDocument(fileId);
+      }
+      // Remove from context
+      setUploadedFiles(prevFiles => prevFiles.filter(file => file.id !== fileId));
+    } catch (error) {
+      console.error('Delete failed:', error);
     }
   };
 
