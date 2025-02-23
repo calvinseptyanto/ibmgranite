@@ -67,7 +67,7 @@ const Summary = () => {
   }, []);
 
   return (
-    <div className="bg-white rounded-lg shadow min-h-[475px] max-h-[475px] flex flex-col">
+    <div className="bg-white rounded-lg shadow min-h-[445px] max-h-[445px] flex flex-col">
       {/* Header */}
       <div className="flex items-center p-4 border-b shrink-0">
         <h2 className="text-xl font-semibold text-gray-800">Summary</h2>
