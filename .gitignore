@@ -3,3 +3,10 @@ node_modules/
 
 # Ignore environment files
 .env
+
+# Common patterns that cause large changes
+venv/
+node_modules/
+__pycache__/
+*.pyc
+.env
