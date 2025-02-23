@@ -13,6 +13,12 @@ const getDummyEvents = () => {
   
   const futureDate = new Date(now);
   futureDate.setDate(now.getDate() + 14);
+  
+  const additionalDate1 = new Date(now);
+  additionalDate1.setDate(now.getDate() + 21);
+
+  const additionalDate2 = new Date(now);
+  additionalDate2.setDate(now.getDate() + -3);
 
   return [
     {
@@ -20,6 +26,12 @@ const getDummyEvents = () => {
       type: 'deadline',
       title: 'Initial Compliance Review',
       description: 'Complete first round of compliance documentation review'
+    },
+    {
+      date: additionalDate2.toISOString().split('T')[0],
+      type: 'deadline',
+      title: 'Regulatory Filing Deadline',
+      description: 'Submit required compliance documents to regulators'
     },
     {
       date: urgentDate.toISOString().split('T')[0],
@@ -32,16 +44,26 @@ const getDummyEvents = () => {
       type: 'milestone',
       title: 'Quarterly Assessment',
       description: 'Conduct quarterly compliance assessment and reporting'
-    }
+    },
+    {
+      date: additionalDate1.toISOString().split('T')[0],
+      type: 'milestone',
+      title: 'Annual Compliance Training',
+      description: 'Mandatory training session for compliance officers'
+    },
   ];
 };
 
 const KeyEvents = () => {
   const [events, setEvents] = useState([]);
   const [hoveredEvent, setHoveredEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setEvents(getDummyEvents());
+    setTimeout(() => {
+      setEvents(getDummyEvents());
+      setLoading(false);
+    }, 7000);
   }, []);
 
   const getEventStatus = (dateStr) => {
@@ -106,40 +128,44 @@ const KeyEvents = () => {
         </button>
       </div>
       
-      <div className="relative">
-        <div className="absolute left-0 right-0 h-0.5 bg-gray-200 top-24" />
+      {loading ? (
+        <div className="text-center text-gray-500">Loading events...</div>
+      ) : (
+        <div className="relative">
+          <div className="absolute left-0 right-0 h-0.5 bg-gray-200 top-24" />
 
-        <div className="relative flex justify-between">
-          {events.map((event, index) => {
-            const styles = getEventStyles(event.date);
-            
-            return (
-              <div 
-                key={index} 
-                className="flex flex-col relative cursor-pointer max-w-[250px]"
-                onMouseEnter={() => setHoveredEvent(index)}
-                onMouseLeave={() => setHoveredEvent(null)}
-              >
-                <div className="absolute top-[88px] left-1/2 transform -translate-x-1/2">
-                  <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${styles.circle}`}>
-                    <Check className={`w-5 h-5 ${styles.icon}`} />
+          <div className="relative flex justify-between">
+            {events.map((event, index) => {
+              const styles = getEventStyles(event.date);
+              
+              return (
+                <div 
+                  key={index} 
+                  className="flex flex-col relative cursor-pointer max-w-[250px]"
+                  onMouseEnter={() => setHoveredEvent(index)}
+                  onMouseLeave={() => setHoveredEvent(null)}
+                >
+                  <div className="absolute top-[88px] left-1/2 transform -translate-x-1/2">
+                    <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${styles.circle}`}>
+                      <Check className={`w-5 h-5 ${styles.icon}`} />
+                    </div>
+                  </div>
+
+                  <div className="mb-20">
+                    <h3 className={`font-semibold text-lg mb-2 ${styles.text}`}>
+                      {event.title}
+                    </h3>
+                    <div className="flex items-center gap-2 text-gray-500">
+                      <Calendar className="w-4 h-4" />
+                      <span>{formatDate(event.date)}</span>
+                    </div>
                   </div>
                 </div>
-
-                <div className="mb-20">
-                  <h3 className={`font-semibold text-lg mb-2 ${styles.text}`}>
-                    {event.title}
-                  </h3>
-                  <div className="flex items-center gap-2 text-gray-500">
-                    <Calendar className="w-4 h-4" />
-                    <span>{formatDate(event.date)}</span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

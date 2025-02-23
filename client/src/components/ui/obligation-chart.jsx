@@ -39,8 +39,8 @@ const ObligationChart = ({ obligations }) => {
   });
 
   const COLORS = {
-    'Company A': '#3498db',
-    'Company B': '#e74c3c',
+    'BuyCo Limited': '#3498db',
+    'Tally Inc.': '#e74c3c',
     'Both': '#2ecc71',
     'Default': '#95a5a6'
   };
