@@ -51,7 +51,7 @@ const LandingPage = () => {
         <div className="max-w-2xl w-full px-6">
         {/* Main Content */}
         <div className="flex justify-center items-center">
-          <img src="assets/logo.png" alt="ConTrack" className="h-40 w-auto mx-auto" />
+          <img src="assets/contrack.png" alt="ConTrack" className="h-40 w-auto mx-auto" />
         </div>
         <div className="text-center mb-12">
           <p className="text-lg text-gray-600">
