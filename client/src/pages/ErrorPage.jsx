@@ -1,10 +1,13 @@
 import React from 'react';
 import { AlertTriangle, ArrowLeft, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const ErrorPage = () => {
+  const navigate = useNavigate();
+  
   const handleRedirect = () => {
-    window.location.href = 'http://localhost:5173/#/';
+    navigate('/#');
   };
 
   return (
