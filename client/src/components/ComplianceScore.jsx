@@ -53,13 +53,6 @@ const ComplianceScore = ({ initialData }) => {
     <div className="bg-white rounded-xl shadow-md p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold text-gray-800">Compliance Score</h2>
-        <button 
-          onClick={fetchComplianceData} 
-          className={`p-2 rounded-full hover:bg-gray-100 ${loading ? 'animate-spin' : ''}`}
-          disabled={loading}
-        >
-          <RefreshCw className="w-5 h-5 text-gray-500" />
-        </button>
       </div>
       
       {loading ? (
