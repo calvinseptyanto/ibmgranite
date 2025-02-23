@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 import { ConTrackAPI } from '@/services/api/ConTrackAPI';
 
-const ComplianceScore = () => {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState({
+const ComplianceScore = ({ initialData }) => {
+  const [loading, setLoading] = useState(!initialData);
+  const [data, setData] = useState(initialData || {
     score: 0,
     obligations: []
   });
@@ -16,14 +16,20 @@ const ComplianceScore = () => {
       setData(response);
     } catch (error) {
       console.error('Failed to fetch compliance data:', error);
+      // If fetch fails and we have initial data, revert to it
+      if (initialData) {
+        setData(initialData);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchComplianceData();
-  }, []);
+    if (!initialData) {
+      fetchComplianceData();
+    }
+  }, [initialData]);
 
   const getScoreColor = (score) => {
     if (score >= 80) return 'text-green-500';
@@ -36,6 +42,12 @@ const ComplianceScore = () => {
     if (score >= 60) return 'border-yellow-500';
     return 'border-red-500';
   };
+
+  // Transform requirements into obligations format if needed
+  const displayObligations = data.obligations || (data.requirements ? [{
+    party: 'Requirements',
+    obligations: data.requirements.map(req => `${req.name}: ${req.met ? 'Met' : 'Not Met'}`)
+  }] : []);
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6">
@@ -77,7 +89,7 @@ const ComplianceScore = () => {
 
           {/* Obligations List */}
           <div className="space-y-4">
-            {data.obligations.map((obligation, index) => (
+            {displayObligations.map((obligation, index) => (
               <div 
                 key={index} 
                 className="p-3 rounded-lg bg-gray-50"

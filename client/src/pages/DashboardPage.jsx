@@ -108,8 +108,7 @@ const DashboardPage = () => {
                 {/* Right Column: Compliance Score and Obligations */}
                 <div className="flex flex-col gap-8">
                   <ComplianceScore
-                    score={complianceData.score}
-                    requirements={complianceData.requirements}
+                    initialData={complianceData}
                   />
                   <ComplianceObligations />
                 </div>

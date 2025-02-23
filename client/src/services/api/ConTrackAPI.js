@@ -31,24 +31,46 @@ export const ConTrackAPI = {
     return response.json();
   },
 
-  // Get Compliance Score and Obligations
+  // In ConTrackAPI.js
   getComplianceData: async () => {
-    const [scoreResponse, obligationsResponse] = await Promise.all([
-      fetch(`${API_BASE_URL}/compliance-score`, {
+    try {
+      // Only fetch obligations since that's what we're using
+      const obligationsResponse = await fetch(`${API_BASE_URL}/compliance-obligations-list`, {
         method: 'POST',
-      }),
-      fetch(`${API_BASE_URL}/compliance-obligations-list`, {
-        method: 'POST',
-      })
-    ]);
+      });
+      
+      const obligationsData = await obligationsResponse.json();
+      
+      // Check if we got an error response
+      if (obligationsData.error) {
+        throw new Error(obligationsData.error);
+      }
 
-    const score = await scoreResponse.json();
-    const obligations = await obligationsResponse.json();
+      // If raw_response exists, try to parse it (it seems to contain JSON string)
+      if (obligationsData.raw_response) {
+        // Find the JSON array in the raw response
+        const match = obligationsData.raw_response.match(/\[.*\]/s);
+        if (match) {
+          try {
+            return {
+              obligations: JSON.parse(match[0])
+            };
+          } catch (e) {
+            console.error('Failed to parse raw response:', e);
+          }
+        }
+      }
 
-    return {
-      score: score.score,
-      obligations: obligations
-    };
+      // If we get here, return empty obligations
+      return {
+        obligations: []
+      };
+    } catch (error) {
+      console.error('API Error:', error);
+      return {
+        obligations: []
+      };
+    }
   },
 
   // Send Chat Message
