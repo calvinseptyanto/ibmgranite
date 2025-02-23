@@ -6,4 +6,4 @@ langchain-openai==0.2.4
 langchain-text-splitters==0.3.0
 ibm-watson-machine-learning==1.0.335
 ibm-watsonx-ai==0.1.6
-chromadb==0.6.3
+chromadb==0.5.16
