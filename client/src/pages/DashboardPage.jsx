@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ChatInterface from '@/components/Chat/ChatInterface';
 import DocumentUpload from '@/components/DocumentUpload';
 import ComplianceScore from '@/components/ComplianceScore';
@@ -20,6 +20,8 @@ const DashboardPage = () => {
   });
   const [chatMode, setChatMode] = useState('popup');
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isPDFSignerOpen, setIsPDFSignerOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [keyEvents, setKeyEvents] = useState([
     {
       date: '2025-03-15',
@@ -42,8 +44,31 @@ const DashboardPage = () => {
     "Recommended actions include reviewing and updating the privacy policy before the March 15 deadline."
   );
 
+  // Effect to handle body scrolling
+  useEffect(() => {
+    if (isPDFSignerOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isPDFSignerOpen]);
+
   const handleFileUpload = (files) => {
-    setUploadedFiles(prev => [...prev, ...files]);
+    setUploadedFiles(files); // Update to replace files instead of adding
+  };
+
+  const handlePDFSignerOpen = (file) => {
+    setSelectedFile(file);
+    setIsPDFSignerOpen(true);
+  };
+
+  const handlePDFSignerClose = () => {
+    setIsPDFSignerOpen(false);
+    setSelectedFile(null);
   };
 
   const handleChatMessage = (message) => {
@@ -56,45 +81,49 @@ const DashboardPage = () => {
       <Navbar />
       
       {/* Content Wrapper */}
-      <div className="flex flex-1 relative">
+      <div className={`flex flex-1 relative ${isPDFSignerOpen ? 'overflow-hidden' : ''}`}>
         {/* Main Content */}
         <main className={`flex-1 px-6 py-8 transition-all duration-300 ${isChatOpen && chatMode === 'sidebar' ? 'mr-[30vw]' : ''}`}>
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-800 mb-8">
-            Document Analysis Dashboard
-          </h1>
-          
-          <div className="flex flex-col gap-8">
-            {/* Two Column Layout */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Left Column: Document Upload and Summary */}
-              <div className="flex flex-col gap-8">
-                <DocumentUpload
-                  onFileUpload={handleFileUpload}
-                  uploadedFiles={uploadedFiles}
-                />
-                <Summary summary={summary} />
+          <div className="max-w-7xl mx-auto">
+            <h1 className="text-3xl font-bold text-gray-800 mb-8">
+              Document Analysis Dashboard
+            </h1>
+            
+            <div className="flex flex-col gap-8">
+              {/* Two Column Layout */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Left Column: Document Upload and Summary */}
+                <div className="flex flex-col gap-8">
+                  <DocumentUpload
+                    onFileUpload={handleFileUpload}
+                    uploadedFiles={uploadedFiles}
+                    onPDFSignerOpen={handlePDFSignerOpen}
+                    onPDFSignerClose={handlePDFSignerClose}
+                    isPDFSignerOpen={isPDFSignerOpen}
+                    selectedFile={selectedFile}
+                  />
+                  <Summary summary={summary} />
+                </div>
+
+                {/* Right Column: Compliance Score and Obligations */}
+                <div className="flex flex-col gap-8">
+                  <ComplianceScore
+                    score={complianceData.score}
+                    requirements={complianceData.requirements}
+                  />
+                  <ComplianceObligations />
+                </div>
               </div>
 
-              {/* Right Column: Compliance Score and Obligations */}
-              <div className="flex flex-col gap-8">
-                <ComplianceScore
-                  score={complianceData.score}
-                  requirements={complianceData.requirements}
-                />
-                <ComplianceObligations />
-              </div>
-            </div>
-
-            {/* Bottom Row: KeyEvents full width */}
-            <div className="mt-8 overflow-x-auto">
-              <div className="min-w-[640px] w-full">
-                <KeyEvents events={keyEvents} />
+              {/* Bottom Row: Key Events */}
+              <div className="mt-8 overflow-x-auto">
+                <div className="min-w-[640px] w-full">
+                  <KeyEvents events={keyEvents} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </main>
+        </main>
 
         {/* Chat Interface */}
         <ChatInterface
@@ -107,6 +136,5 @@ const DashboardPage = () => {
     </div>
   );
 };
-
 
 export default DashboardPage;

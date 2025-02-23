@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 /* Base layout styles */
 body {
   overflow-x: hidden;
@@ -29,5 +31,14 @@ body.fullscreen-mode .container {
     margin-right: 0;
     opacity: 0.5;
     pointer-events: none;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
