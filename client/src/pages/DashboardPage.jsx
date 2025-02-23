@@ -58,7 +58,7 @@ const DashboardPage = () => {
         <main className={`flex-1 px-6 py-8 transition-all duration-300 ${isChatOpen && chatMode === 'sidebar' ? 'mr-[30vw]' : ''}`}>
           <div className="max-w-7xl mx-auto">
             <h1 className="text-3xl font-bold text-gray-800 mb-8">
-              Document Analysis Dashboard
+              ^
             </h1>
             
             <div className="flex flex-col gap-8">
