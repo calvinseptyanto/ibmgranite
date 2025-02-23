@@ -2,6 +2,7 @@ import os
 import json
 from flask import Flask, request, jsonify
 
+
 # ------------------ LangChain / IBM Watsonx Imports ------------------
 from langchain_ibm import WatsonxEmbeddings, WatsonxLLM
 from langchain_chroma import Chroma
@@ -26,7 +27,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # ------------------ Flask App Initialization ------------------
+from flask_cors import CORS
+
 app = Flask(__name__)
+CORS(app, resources={
+    r"/*": {
+        "origins": ["http://localhost:5173"],  
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
 app.config["UPLOAD_FOLDER"] = "./uploaded_pdfs"
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 

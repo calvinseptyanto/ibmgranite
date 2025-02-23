@@ -1,15 +1,15 @@
 import './css/globals.css'
-import TestPage from './pages/TestPage'
-import ErrorPage from './pages/ErrorPage'
+import LandingPage from './pages/LandingPage'
 import DashboardPage from './pages/DashboardPage'
+import ErrorPage from './pages/ErrorPage'
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<DashboardPage />} />
-        <Route path="/test" element={<TestPage />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>
