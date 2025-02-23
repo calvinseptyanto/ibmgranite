@@ -128,6 +128,7 @@ import { useNavigate } from 'react-router-dom';
 import { Upload, Link as LinkIcon } from 'lucide-react';
 import { ConTrackAPI } from '@/services/api/ConTrackAPI';
 import { useFile } from "../services/FileContext";
+import { documentService } from '@/services/documentService';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -142,13 +143,38 @@ const LandingPage = () => {
 
     setIsUploading(true);
     try {
-      // Store files in context
-      setUploadedFiles(files);
-      navigate('/dashboard');
+      // Upload files to ConTrack API
+      await ConTrackAPI.uploadFiles(files);
+
+      // Upload to Supabase and get dashboard ID
+      const { document, dashboardId } = await documentService.uploadDocument(files[0]);
+      
+      // Store files in context with Supabase IDs
+      setUploadedFiles(files.map(file => ({
+        ...file,
+        id: document.id,
+        url: document.file_url
+      })));
+
+      // Navigate to dashboard with new ID
+      navigate(`/dashboard?id=${dashboardId}`);
     } catch (error) {
       console.error('Upload failed:', error);
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleFileDelete = async (fileId) => {
+    try {
+      if (typeof fileId === 'string') {
+        // If it's a Supabase file ID
+        await documentService.deleteDocument(fileId);
+      }
+      // Remove from context
+      setUploadedFiles(prevFiles => prevFiles.filter(file => file.id !== fileId));
+    } catch (error) {
+      console.error('Delete failed:', error);
     }
   };
 

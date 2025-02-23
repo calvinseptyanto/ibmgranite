@@ -1,6 +1,12 @@
 import React, { useRef } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { 
+  AlertDialog, 
+  AlertDialogContent, 
+  AlertDialogHeader, 
+  AlertDialogTitle,
+  AlertDialogDescription 
+} from '@/components/ui/alert-dialog';
 
 const SignatureModal = ({ isOpen, onClose, onSave }) => {
   const sigCanvas = useRef(null);
@@ -19,8 +25,11 @@ const SignatureModal = ({ isOpen, onClose, onSave }) => {
           <AlertDialogTitle className="text-xl font-semibold text-gray-900">
             Create Your Signature
           </AlertDialogTitle>
+          <AlertDialogDescription>
+            Use the canvas below to draw your signature. You can clear and redraw if needed.
+          </AlertDialogDescription>
         </AlertDialogHeader>
-        
+       
         <div className="mt-4">
           <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
             <SignatureCanvas

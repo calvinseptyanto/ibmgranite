@@ -3,7 +3,7 @@ import { Upload, X, FileText, Folder, Pen } from 'lucide-react';
 import PDFSigner from './PDF/PDFSigner';
 import { ConTrackAPI } from '@/services/api/ConTrackAPI';
 
-const DocumentUpload = ({ onFileUpload, uploadedFiles }) => {
+const DocumentUpload = ({ onFileUpload, onFileDelete, uploadedFiles }) => {
   const [selectedPDF, setSelectedPDF] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -34,13 +34,36 @@ const DocumentUpload = ({ onFileUpload, uploadedFiles }) => {
   };
 
   const handleFileClick = (file) => {
-    if (file.type === 'application/pdf') {
+    // Check if it's a PDF either by type or file extension
+    const isPDF = file.type === 'application/pdf' || 
+                  (file.name && file.name.toLowerCase().endsWith('.pdf'));
+    
+    if (isPDF) {
       setSelectedPDF(file);
     }
   };
 
-  const getFileIcon = (filename) => {
-    const extension = filename.split('.').pop().toLowerCase();
+  const handleDelete = async (file, index, e) => {
+    e.stopPropagation();
+    try {
+      if (file.id) {
+        // If file has an ID, it's stored in Supabase
+        await onFileDelete(file.id);
+      } else {
+        // If no ID, just remove from context
+        onFileDelete(index);
+      }
+    } catch (error) {
+      console.error('Delete failed:', error);
+    }
+  };
+
+  const getFileIcon = (file) => {
+    if (!file?.name) {
+      return <FileText className="w-8 h-8 text-gray-400" />;
+    }
+    
+    const extension = file.name.split('.').pop().toLowerCase();
     switch (extension) {
       case 'pdf':
         return <FileText className="w-8 h-8 text-red-500" />;
@@ -67,24 +90,23 @@ const DocumentUpload = ({ onFileUpload, uploadedFiles }) => {
                 onClick={() => handleFileClick(file)}
               >
                 {/* Remove Button */}
-                <button 
+                <button
                   className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onFileUpload(uploadedFiles.filter((_, i) => i !== index));
-                  }}
+                  onClick={(e) => handleDelete(file, index, e)}
                 >
                   <X className="w-3 h-3" />
                 </button>
-                
+               
                 {/* File Icon */}
-                {getFileIcon(file.name)}
-                
+                {getFileIcon(file)}
+               
                 {/* File Name */}
                 <span className="text-xs text-gray-600 mt-1 truncate w-full text-center">
-                  {file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name}
+                  {file.name ? 
+                    (file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name) 
+                    : 'Unnamed File'
+                  }
                 </span>
-
                 {/* Sign PDF Button */}
                 {file.type === 'application/pdf' && (
                   <button
@@ -106,7 +128,6 @@ const DocumentUpload = ({ onFileUpload, uploadedFiles }) => {
           </div>
         )}
       </div>
-
       {/* Upload Buttons */}
       <div className="flex gap-2 justify-center">
         {/* File Upload Button */}
@@ -123,7 +144,7 @@ const DocumentUpload = ({ onFileUpload, uploadedFiles }) => {
           <label
             htmlFor="file-upload"
             className={`
-              flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg 
+              flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg
               hover:bg-blue-600 cursor-pointer transition-colors
               ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}
             `}
@@ -132,7 +153,6 @@ const DocumentUpload = ({ onFileUpload, uploadedFiles }) => {
             <span>{isUploading ? 'Uploading...' : 'Upload Files'}</span>
           </label>
         </div>
-
         {/* Folder Upload Button */}
         <div>
           <input
@@ -147,7 +167,7 @@ const DocumentUpload = ({ onFileUpload, uploadedFiles }) => {
           <label
             htmlFor="folder-upload"
             className={`
-              flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg 
+              flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg
               hover:bg-green-600 cursor-pointer transition-colors
               ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}
             `}
@@ -157,7 +177,6 @@ const DocumentUpload = ({ onFileUpload, uploadedFiles }) => {
           </label>
         </div>
       </div>
-
       {/* PDF Signer Modal */}
       {selectedPDF && (
         <PDFSigner

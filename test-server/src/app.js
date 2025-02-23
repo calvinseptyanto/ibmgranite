@@ -8,11 +8,7 @@ const cors = require("cors");
 // CREATE APP
 //////////////////////////////////////////////////////
 const app = express();
-app.use(cors({
-  origin: 'http://localhost:5173', // Your frontend URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(cors());
 
 //////////////////////////////////////////////////////
 // USES

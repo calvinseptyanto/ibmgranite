@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3333';
+const API_BASE_URL = import.meta.env.BACKEND_URL;
 
 export const ConTrackAPI = {
   // Upload PDFs
