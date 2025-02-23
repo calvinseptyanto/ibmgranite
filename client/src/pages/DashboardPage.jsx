@@ -44,21 +44,14 @@ const DashboardPage = () => {
     "Recommended actions include reviewing and updating the privacy policy before the March 15 deadline."
   );
 
-  // Effect to handle body scrolling
   useEffect(() => {
-    if (isPDFSignerOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
+    if (location.state?.uploadedFiles) {
+      setUploadedFiles(location.state.uploadedFiles);
     }
-
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isPDFSignerOpen]);
+  }, [location.state]);
 
   const handleFileUpload = (files) => {
-    setUploadedFiles(files); // Update to replace files instead of adding
+    setUploadedFiles(prev => [...prev, ...files]);
   };
 
   const handlePDFSignerOpen = (file) => {
@@ -70,6 +63,7 @@ const DashboardPage = () => {
     setIsPDFSignerOpen(false);
     setSelectedFile(null);
   };
+  
 
   const handleChatMessage = (message) => {
     console.log('Processing message:', message);

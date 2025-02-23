@@ -1,23 +1,45 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Upload, Link as LinkIcon } from 'lucide-react';
+import { ConTrackAPI } from '@/services/api/ConTrackAPI';
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const [linkInput, setLinkInput] = useState('');
   const [showLinkInput, setShowLinkInput] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   
   const handleFileUpload = async (event) => {
     const files = Array.from(event.target.files);
-    // Handle file upload logic here
-    // After successful upload, navigate to dashboard
-    navigate('/dashboard');
+    if (files.length === 0) return;
+
+    setIsUploading(true);
+    try {
+      // Upload files to API
+      await ConTrackAPI.uploadFiles(files);
+      
+      // Navigate to dashboard with files info
+      navigate('/dashboard', { 
+        state: { 
+          uploadedFiles: files.map(file => ({
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            lastModified: file.lastModified
+          }))
+        }
+      });
+    } catch (error) {
+      console.error('Upload failed:', error);
+      // You might want to show an error message to the user
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleLinkSubmit = (e) => {
     e.preventDefault();
     if (linkInput.trim()) {
-      // Handle link validation and navigation
       navigate(`/dashboard?id=${linkInput}`);
     }
   };
@@ -26,14 +48,18 @@ const LandingPage = () => {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center">
       <div className="max-w-2xl w-full px-6">
         {/* Main Content */}
+        <div className="max-w-2xl w-full px-6">
+        {/* Main Content */}
+        <div className="flex justify-center items-center">
+          <img src="assets/logo.png" alt="ConTrack" className="h-40 w-auto mx-auto" />
+        </div>
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Legal Document Analysis
-          </h1>
           <p className="text-lg text-gray-600">
             Upload your documents or enter a shared link to get started
           </p>
         </div>
+      </div>
+
 
         {/* Options Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -47,17 +73,18 @@ const LandingPage = () => {
                 className="hidden"
                 id="file-upload"
                 accept=".pdf,.doc,.docx"
+                disabled={isUploading}
               />
               <label
                 htmlFor="file-upload"
-                className="cursor-pointer"
+                className={`cursor-pointer ${isUploading ? 'opacity-50' : ''}`}
               >
-                <div className="mb-4 mx-auto w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
-                  <Upload className="w-8 h-8 text-blue-500" />
+                <div className={`mb-4 mx-auto w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center ${isUploading ? 'animate-pulse' : ''}`}>
+                  <Upload className={`w-8 h-8 text-blue-500 ${isUploading ? 'animate-bounce' : ''}`} />
                 </div>
                 <h2 className="text-xl font-semibold mb-2">Upload Documents</h2>
                 <p className="text-gray-500 text-sm">
-                  Upload your legal documents to start analysis
+                  {isUploading ? 'Uploading...' : 'Upload your legal documents to start analysis'}
                 </p>
               </label>
             </div>

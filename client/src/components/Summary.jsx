@@ -23,7 +23,7 @@ const Summary = () => {
   }, []);
 
   return (
-    <div className="bg-white rounded-lg shadow h-[300px] flex flex-col">
+    <div className="bg-white rounded-lg shadow h-[540px] flex flex-col">
       {/* Header */}
       <div className="flex justify-between items-center p-4 border-b shrink-0">
         <h2 className="text-xl font-semibold text-gray-800">Summary</h2>
