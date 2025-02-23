@@ -24,7 +24,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
           <div className="flex items-center">
-            <img src="assets/logo.png" alt="ConTrack" className="h-30" />
+            <img src="assets/contrack.png" alt="ConTrack" className="h-30" />
           </div>
 
           {/* Share Button */}
