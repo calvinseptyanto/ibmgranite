@@ -8,4 +8,5 @@ ibm-watson-machine-learning==1.0.335
 ibm-watsonx-ai==0.1.6
 chromadb==0.5.16
 Flask==3.0.2
+ibm_watsonx_ai==1.2.8
 langchain-ibm==0.3.6
