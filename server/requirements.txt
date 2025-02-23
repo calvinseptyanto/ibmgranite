@@ -6,6 +6,7 @@ langchain-openai==0.2.4
 langchain-text-splitters==0.3.0
 chromadb==0.5.16
 Flask==3.0.2
+Flask-Cors==5.0.0
 ibm-cos-sdk==2.13.6
 ibm-cos-sdk-core==2.13.6
 ibm-cos-sdk-s3transfer==2.13.6
