@@ -57,7 +57,7 @@ const DocumentUpload = ({ onFileUpload, uploadedFiles }) => {
   return (
     <div className="bg-white rounded-lg shadow p-4">
       {/* Files Display Box */}
-      <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 min-h-[200px] mb-4">
+      <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 min-h-[100px] mb-4">
         {uploadedFiles.length > 0 ? (
           <div className="flex flex-wrap gap-4">
             {uploadedFiles.map((file, index) => (
