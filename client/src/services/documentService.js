@@ -95,5 +95,72 @@ export const documentService = {
       console.error('Error deleting document:', error);
       throw error;
     }
+  },
+
+  async overwriteDocument(fileId, newFileBlob, originalFileName) {
+    try {
+      // Get the existing file path from the database
+      const { data: existingFile } = await supabase
+        .from('documents')
+        .select('file_path, storage_path')
+        .eq('id', fileId)
+        .single();
+
+      if (!existingFile) {
+        throw new Error('File not found');
+      }
+
+      // Delete the existing file from storage
+      const { error: deleteError } = await supabase.storage
+        .from('documents')
+        .remove([existingFile.storage_path]);
+
+      if (deleteError) {
+        throw deleteError;
+      }
+
+      // Create a new File object with the original name
+      const newFile = new File([newFileBlob], originalFileName, {
+        type: 'application/pdf'
+      });
+
+      // Upload the new file to the same path
+      const { error: uploadError, data: uploadData } = await supabase.storage
+        .from('documents')
+        .upload(existingFile.storage_path, newFile, {
+          upsert: true
+        });
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Get the new public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('documents')
+        .getPublicUrl(existingFile.storage_path);
+
+      // Update the document record with the new URL and modified timestamp
+      const { error: updateError } = await supabase
+        .from('documents')
+        .update({
+          file_url: publicUrl,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', fileId);
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      return {
+        id: fileId,
+        file_url: publicUrl,
+        file_name: originalFileName
+      };
+    } catch (error) {
+      console.error('Error overwriting document:', error);
+      throw error;
+    }
   }
 };

@@ -34,7 +34,11 @@ const DocumentUpload = ({ onFileUpload, onFileDelete, uploadedFiles }) => {
   };
 
   const handleFileClick = (file) => {
-    if (file.type === 'application/pdf') {
+    // Check if it's a PDF either by type or file extension
+    const isPDF = file.type === 'application/pdf' || 
+                  (file.name && file.name.toLowerCase().endsWith('.pdf'));
+    
+    if (isPDF) {
       setSelectedPDF(file);
     }
   };
